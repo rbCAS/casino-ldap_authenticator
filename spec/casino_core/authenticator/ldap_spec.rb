@@ -8,7 +8,7 @@ describe CASinoCore::Authenticator::LDAP do
     :base => 'dc=users,dc=example.com',
     :encryption => 'simple_tls',
     :username_attribute => 'uid',
-    :extra_attributes => { :email => :mail, :fullname => :displayname }
+    :extra_attributes => { :email => 'mail', :fullname => :displayname }
   } }
   let(:subject) { described_class.new(options) }
   let(:connection) { Object.new }

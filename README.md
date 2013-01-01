@@ -1,4 +1,4 @@
-# casino_core-authenticator-ldap
+# casino_core-authenticator-ldap [![Build Status](https://travis-ci.org/rbCAS/casino_core-authenticator-ldap.png?branch=master)](https://travis-ci.org/rbCAS/casino_core-authenticator-ldap)
 
 Provides mechanism to use LDAP as an authenticator for [CASinoCore](https://github.com/rbCAS/CASinoCore).
 

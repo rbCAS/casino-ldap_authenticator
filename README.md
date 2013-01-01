@@ -2,6 +2,21 @@
 
 Provides mechanism to use LDAP as an authenticator for [CASinoCore](https://github.com/rbCAS/CASinoCore).
 
+To use the LDAP authenticator, configure it in your cas.yml:
+
+    authenticators:
+      my_company_ldap:
+        authenticator: "ldap"
+        options:
+          host: "localhost"
+          port: 12445
+          base: "dc=users,dc=example.com"
+          username_attribute: "uid"
+          encryption: "simple_tls"
+          extra_attributes:
+            email: "mail"
+            fullname: "displayname"
+
 ## Contributing to casino_core-authenticator-ldap
  
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.

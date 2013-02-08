@@ -6,11 +6,11 @@ To use the LDAP authenticator, configure it in your cas.yml:
 
     authenticators:
       my_company_ldap:
-        authenticator: "ldap"
+        authenticator: "LDAP"
         options:
           host: "localhost"
           port: 12445
-          base: "dc=users,dc=example.com"
+          base: "dc=users,dc=example,dc=com"
           username_attribute: "uid"
           encryption: "simple_tls"
           extra_attributes:

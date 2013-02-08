@@ -9,8 +9,8 @@ To use the LDAP authenticator, configure it in your cas.yml:
         authenticator: "LDAP"
         options:
           host: "localhost"
-          port: 12445
-          base: "dc=users,dc=example,dc=com"
+          port: 636
+          base: "ou=people,dc=example,dc=com"
           username_attribute: "uid"
           encryption: "simple_tls"
           extra_attributes:
@@ -18,7 +18,7 @@ To use the LDAP authenticator, configure it in your cas.yml:
             fullname: "displayname"
 
 ## Contributing to casino_core-authenticator-ldap
- 
+
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it.
 * Fork the project.

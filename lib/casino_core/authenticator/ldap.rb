@@ -42,6 +42,9 @@ class CASinoCore::Authenticator::LDAP
       @ldap.auth(@options[:admin_user], @options[:admin_password])
     end
     @user_plain = @ldap.bind_as(:base => @options[:base], :size => 1, :password => @password, :filter => user_filter)
+    if @user_plain.is_a?(Array)
+      @user_plain = @user_plain.first
+    end
   end
 
   def username_attribute
@@ -58,7 +61,7 @@ class CASinoCore::Authenticator::LDAP
 
   def generate_user
     @user = {
-      username: @user_plain[username_attribute][0],
+      username: @user_plain[username_attribute].first,
       extra_attributes: extra_attributes
     }
   end
@@ -69,7 +72,7 @@ class CASinoCore::Authenticator::LDAP
       @options[:extra_attributes].each do |index_result, index_ldap|
         value = @user_plain[index_ldap]
         if value
-          result[index_result] = value[0]
+          result[index_result] = value.first
         end
       end
       result

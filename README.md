@@ -13,6 +13,9 @@ To use the LDAP authenticator, configure it in your cas.yml:
           base: "ou=people,dc=example,dc=com"
           username_attribute: "uid"
           encryption: "simple_tls"
+          # optional, credentials to perform user lookup:
+          admin_user: "cn=admin,dc=nine,dc=ch"
+          admin_password: "password"
           extra_attributes:
             email: "mail"
             fullname: "displayname"

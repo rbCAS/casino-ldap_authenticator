@@ -1,6 +1,6 @@
-# casino_core-authenticator-ldap [![Build Status](https://travis-ci.org/rbCAS/casino_core-authenticator-ldap.png?branch=master)](https://travis-ci.org/rbCAS/casino_core-authenticator-ldap)
+# casino-ldap_authenticator [![Build Status](https://travis-ci.org/rbCAS/casino-ldap_authenticator.png?branch=master)](https://travis-ci.org/rbCAS/casino-ldap_authenticator)
 
-Provides mechanism to use LDAP as an authenticator for [CASinoCore](https://github.com/rbCAS/CASinoCore).
+Provides mechanism to use LDAP as an authenticator for [CASino](https://github.com/rbCAS/CASino).
 
 To use the LDAP authenticator, configure it in your cas.yml:
 
@@ -20,7 +20,7 @@ To use the LDAP authenticator, configure it in your cas.yml:
             email: "mail"
             fullname: "displayname"
 
-## Contributing to casino_core-authenticator-ldap
+## Contributing to casino-ldap_authenticator
 
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it.
@@ -34,4 +34,3 @@ To use the LDAP authenticator, configure it in your cas.yml:
 
 Copyright (c) 2013 Nils Caspar. See LICENSE.txt
 for further details.
-

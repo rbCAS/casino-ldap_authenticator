@@ -1,5 +1,5 @@
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-$LOAD_PATH.unshift(File.dirname(__FILE__))
+require 'rubygems'
+require 'bundler/setup'
 
 require 'simplecov'
 SimpleCov.start do
@@ -7,7 +7,7 @@ SimpleCov.start do
 end
 
 require 'rspec'
-require 'casino_core-authenticator-ldap'
+require 'casino-ldap_authenticator'
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.

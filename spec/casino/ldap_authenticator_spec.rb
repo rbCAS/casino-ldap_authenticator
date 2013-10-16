@@ -1,7 +1,7 @@
 require 'spec_helper'
-require 'casino_core/authenticator/ldap'
+require 'casino/ldap_authenticator'
 
-describe CASinoCore::Authenticator::LDAP do
+describe CASino::LDAPAuthenticator do
   let(:options) { {
     :host => 'localhost',
     :port => 12445,
@@ -90,7 +90,7 @@ describe CASinoCore::Authenticator::LDAP do
       it 'raises an AuthenticatorError' do
         lambda {
           subject.validate(username, password)
-        }.should raise_error(CASinoCore::Authenticator::AuthenticatorError)
+        }.should raise_error(CASino::Authenticator::AuthenticatorError)
       end
     end
 

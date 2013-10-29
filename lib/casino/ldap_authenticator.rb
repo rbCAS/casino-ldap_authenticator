@@ -1,7 +1,7 @@
 require 'net/ldap'
-require 'casino_core/authenticator'
+require 'casino/authenticator'
 
-class CASinoCore::Authenticator::LDAP
+class CASino::LDAPAuthenticator
   DEFAULT_USERNAME_ATTRIBUTE = 'uid'
 
   # @param [Hash] options
@@ -22,7 +22,7 @@ class CASinoCore::Authenticator::LDAP
         @user
       end
     rescue Net::LDAP::LdapError => e
-      raise CASinoCore::Authenticator::AuthenticatorError,
+      raise CASino::Authenticator::AuthenticatorError,
         "LDAP authentication failed with '#{e}'. Check your authenticator configuration."
     end
   end

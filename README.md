@@ -1,4 +1,4 @@
-# casino-ldap_authenticator [![Build Status](https://travis-ci.org/rbCAS/casino-ldap_authenticator.png?branch=master)](https://travis-ci.org/rbCAS/casino-ldap_authenticator)
+# casino-ldap_authenticator [![Build Status](https://travis-ci.org/rbCAS/casino-ldap_authenticator.png?branch=master)](https://travis-ci.org/rbCAS/casino-ldap_authenticator) [![Coverage Status](https://coveralls.io/repos/rbCAS/casino-ldap_authenticator/badge.png)](https://coveralls.io/r/rbCAS/casino-ldap_authenticator)
 
 Provides mechanism to use LDAP as an authenticator for [CASino](https://github.com/rbCAS/CASino).
 

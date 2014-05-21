@@ -8,7 +8,7 @@ describe CASino::LDAPAuthenticator do
     :base => 'dc=users,dc=example.com',
     :encryption => 'simple_tls',
     :username_attribute => 'uid',
-    :extra_attributes => { :email => 'mail', :fullname => :displayname }
+    :extra_attributes => { :email => 'mail', :fullname => :displayname, :memberof => 'memberof'}
   } }
   let(:subject) { described_class.new(options) }
   let(:connection) { Object.new }
@@ -24,9 +24,11 @@ describe CASino::LDAPAuthenticator do
     let(:username) { 'test' }
     let(:password) { 'foo' }
     let(:user_filter) { Net::LDAP::Filter.eq(options[:username_attribute], username) }
+    let(:extra_attributes) { ['mail', :displayname, 'memberof'] }
 
     before(:each) do
       connection.stub(:bind_as)
+      connection.stub(:search)
     end
 
     it 'does the connection setup' do
@@ -41,9 +43,15 @@ describe CASino::LDAPAuthenticator do
       subject.validate(username, password)
     end
 
-    context 'when validation succeeds' do
+    it 'calls the #search method on the LDAP connection' do
+      connection.should_receive(:search).with(:base => options[:base], :filter => user_filter, :attributes => extra_attributes)
+      subject.validate(username, password)
+    end
+
+    context 'when validation succeeds for user with missing data' do
       let(:fullname) { 'Example User' }
       let(:email) { "#{username}@example.org" }
+      let(:group) { "group1" }
       let(:ldap_entry) {
         entry = Net::LDAP::Entry.new
         {:uid => username, :displayname => fullname, :mail => email}.each do |key, value|
@@ -55,6 +63,41 @@ describe CASino::LDAPAuthenticator do
         connection.stub(:bind_as) do
           ldap_entry
         end
+        connection.stub(:search) do
+          ldap_entry
+        end
+      end
+
+      it 'returns the user data with blank value for missing data' do
+        subject.validate(username, password).should == {
+          username: username,
+          extra_attributes: {
+            :email => email,
+            :fullname => fullname,
+            :memberof => ''
+          }
+        }
+      end
+    end
+
+    context 'when validation succeeds for user with complete data' do
+      let(:fullname) { 'Example User' }
+      let(:email) { "#{username}@example.org" }
+      let(:group) { "group1" }
+      let(:ldap_entry) {
+        entry = Net::LDAP::Entry.new
+        {:uid => username, :displayname => fullname, :mail => email, :memberof => group}.each do |key, value|
+          entry[key] = [value]
+        end
+        entry
+      }
+      before(:each) do
+        connection.stub(:bind_as) do
+          ldap_entry
+        end
+        connection.stub(:search) do
+          ldap_entry
+        end
       end
 
       it 'returns the user data' do
@@ -62,7 +105,8 @@ describe CASino::LDAPAuthenticator do
           username: username,
           extra_attributes: {
             :email => email,
-            :fullname => fullname
+            :fullname => fullname,
+            :memberof => group
           }
         }
       end

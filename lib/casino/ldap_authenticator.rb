@@ -42,8 +42,11 @@ class CASino::LDAPAuthenticator
       @ldap.auth(@options[:admin_user], @options[:admin_password])
     end
     @user_plain = @ldap.bind_as(:base => @options[:base], :size => 1, :password => @password, :filter => user_filter)
-    if @user_plain.is_a?(Array)
-      @user_plain = @user_plain.first
+    if @user_plain != false
+      @user_plain = @ldap.search(:base => @options[:base], :filter => user_filter, :attributes => @options[:extra_attributes].values)
+      if @user_plain.is_a?(Array)
+        @user_plain = @user_plain.first
+      end
     end
   end
 

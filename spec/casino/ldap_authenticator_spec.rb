@@ -51,7 +51,6 @@ describe CASino::LDAPAuthenticator do
     context 'when validation succeeds for user with missing data' do
       let(:fullname) { 'Example User' }
       let(:email) { "#{username}@example.org" }
-      let(:group) { "group1" }
       let(:ldap_entry) {
         entry = Net::LDAP::Entry.new
         {:uid => username, :displayname => fullname, :mail => email}.each do |key, value|
@@ -83,10 +82,10 @@ describe CASino::LDAPAuthenticator do
     context 'when validation succeeds for user with complete data' do
       let(:fullname) { 'Example User' }
       let(:email) { "#{username}@example.org" }
-      let(:group) { "group1" }
+      let(:membership) { "cn=group1" }
       let(:ldap_entry) {
         entry = Net::LDAP::Entry.new
-        {:uid => username, :displayname => fullname, :mail => email, :memberof => group}.each do |key, value|
+        {:uid => username, :displayname => fullname, :mail => email, :memberof => membership}.each do |key, value|
           entry[key] = [value]
         end
         entry
@@ -106,7 +105,7 @@ describe CASino::LDAPAuthenticator do
           extra_attributes: {
             :email => email,
             :fullname => fullname,
-            :memberof => group
+            :memberof => membership
           }
         }
       end

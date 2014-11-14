@@ -44,7 +44,7 @@ describe CASino::LDAPAuthenticator do
     end
 
     it 'calls the #search method on the LDAP connection' do
-      connection.should_receive(:search).with(:base => options[:base], :filter => user_filter, :attributes => extra_attributes)
+      connection.should_receive(:search).with(:base => options[:base], :filter => user_filter, :attributes => extra_attributes + [options[:username_attribute]])
       subject.validate(username, password)
     end
 

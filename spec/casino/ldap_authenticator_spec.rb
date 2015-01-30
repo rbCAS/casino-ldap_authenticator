@@ -43,9 +43,26 @@ describe CASino::LDAPAuthenticator do
       subject.validate(username, password)
     end
 
-    it 'calls the #search method on the LDAP connection' do
-      connection.should_receive(:search).with(:base => options[:base], :filter => user_filter, :attributes => extra_attributes + [options[:username_attribute]])
-      subject.validate(username, password)
+    context 'when validation succeeds' do
+      before(:each) do
+        connection.stub(:bind_as).and_return(Net::LDAP::Entry.new)
+      end
+
+      it 'calls the #search method on the LDAP connection' do
+        connection.should_receive(:search).with(:base => options[:base], :filter => user_filter, :attributes => extra_attributes + [options[:username_attribute]])
+        subject.validate(username, password)
+      end
+    end
+
+    context 'when validation fails' do
+      before(:each) do
+        connection.stub(:bind_as).and_return(false)
+      end
+
+      it 'does not call the #search method on the LDAP connection' do
+        connection.should_not_receive(:search)
+        subject.validate(username, password)
+      end
     end
 
     context 'when validation succeeds for user with missing data' do

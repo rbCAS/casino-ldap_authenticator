@@ -65,6 +65,15 @@ describe CASino::LDAPAuthenticator do
       end
     end
 
+    context 'with an empty password' do
+      let(:password) { '' }
+
+      it 'does not call the #bind_as method on the LDAP connection' do
+        connection.should_not_receive(:bind_as)
+        subject.validate(username, password)
+      end
+    end
+
     context 'when validation succeeds for user with missing data' do
       let(:fullname) { 'Example User' }
       let(:email) { "#{username}@example.org" }

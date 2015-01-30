@@ -36,9 +36,13 @@ class CASino::LDAPAuthenticator
   end
 
   def authenticate(username, password)
+    # Don't allow "Unauthenticated bind" (http://www.openldap.org/doc/admin24/security.html#Authentication%20Methods)
+    return false unless password && !password.empty?
+
     unless @options[:admin_user].nil?
       ldap.auth(@options[:admin_user], @options[:admin_password])
     end
+
     user_plain = ldap.bind_as(:base => @options[:base], :size => 1, :password => password, :filter => user_filter(username))
     if user_plain
       include_attributes = @options[:extra_attributes].values + [username_attribute]

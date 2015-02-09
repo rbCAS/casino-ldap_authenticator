@@ -23,5 +23,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'coveralls'
 
   s.add_runtime_dependency 'net-ldap', '~> 0.3'
-  s.add_runtime_dependency 'casino', '~> 3.0.0'
+  s.add_runtime_dependency 'casino', '>= 3.0.0', '< 5.0.0'
 end

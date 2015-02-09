@@ -10,48 +10,58 @@ class CASino::LDAPAuthenticator
   end
 
   def validate(username, password)
-    begin
-      user_plain = authenticate(username, password)
-      if !user_plain
-        false
-      else
-        generate_user(user_plain)
-      end
-    rescue Net::LDAP::LdapError => e
-      raise CASino::Authenticator::AuthenticatorError,
-        "LDAP authentication failed with '#{e}'. Check your authenticator configuration."
-    end
+    authenticate(username, password)
+  rescue Net::LDAP::LdapError => e
+    raise CASino::Authenticator::AuthenticatorError,
+      "LDAP authentication failed with '#{e}'. Check your authenticator configuration."
+  end
+
+  def load_user_data(username)
+    load_user_data_with_connection(username, connect_to_ldap)
   end
 
   private
-  def ldap
-    return @ldap if @ldap
-    @ldap = Net::LDAP.new
-    @ldap.host = @options[:host]
-    @ldap.port = @options[:port]
-    if @options[:encryption]
-      @ldap.encryption(@options[:encryption].to_sym)
+  def connect_to_ldap
+    Net::LDAP.new.tap do |ldap|
+      ldap.host = @options[:host]
+      ldap.port = @options[:port]
+      if @options[:encryption]
+        ldap.encryption(@options[:encryption].to_sym)
+      end
+      unless @options[:admin_user].nil?
+        ldap.auth(@options[:admin_user], @options[:admin_password])
+      end
     end
-    return @ldap
   end
 
   def authenticate(username, password)
     # Don't allow "Unauthenticated bind" (http://www.openldap.org/doc/admin24/security.html#Authentication%20Methods)
     return false unless password && !password.empty?
 
-    unless @options[:admin_user].nil?
-      ldap.auth(@options[:admin_user], @options[:admin_password])
+    ldap = connect_to_ldap
+    user = ldap.bind_as(:base => @options[:base], :size => 1, :password => password, :filter => user_filter(username))
+    if user
+      load_user_data_with_connection(username, ldap)
+    else
+      false
     end
+  end
 
-    user_plain = ldap.bind_as(:base => @options[:base], :size => 1, :password => password, :filter => user_filter(username))
-    if user_plain
-      include_attributes = @options[:extra_attributes].values + [username_attribute]
-      user_plain = ldap.search(:base => @options[:base], :filter => user_filter(username), :attributes => include_attributes)
-      if user_plain.is_a?(Array)
-        user_plain = user_plain.first
-      end
+  def load_user_data_with_connection(username, ldap)
+    include_attributes = @options[:extra_attributes].values + [username_attribute]
+    user = ldap.search(:base => @options[:base], :filter => user_filter(username), :attributes => include_attributes)
+    return nil if user.nil?
+    if user.is_a?(Array)
+      user = user.first
     end
-    return user_plain
+    user_data(user)
+  end
+
+  def user_data(user)
+    {
+      username: user[username_attribute].first,
+      extra_attributes: extra_attributes(user)
+    }
   end
 
   def username_attribute
@@ -64,13 +74,6 @@ class CASino::LDAPAuthenticator
       filter &= Net::LDAP::Filter.construct(@options[:filter])
     end
     filter
-  end
-
-  def generate_user(user_plain)
-    {
-      username: user_plain[username_attribute].first,
-      extra_attributes: extra_attributes(user_plain)
-    }
   end
 
   def extra_attributes(user_plain)

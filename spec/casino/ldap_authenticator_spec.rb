@@ -15,8 +15,42 @@ describe CASino::LDAPAuthenticator do
 
   before(:each) do
     Net::LDAP.stub(:new).and_return(connection)
-    [:host=, :port=, :encryption].each do |setting|
+    [:host=, :port=, :encryption, :bind_as, :search].each do |setting|
       connection.stub(setting)
+    end
+  end
+
+  describe '#load_user_data' do
+    let(:username) { 'NaNiwa' }
+    let(:email) { 'naniwa@swarmhosts.com' }
+
+    context 'valid username' do
+      let(:ldap_entry) {
+        Net::LDAP::Entry.new.tap do |entry|
+          entry[:uid] = username
+          entry[:mail] = email
+        end
+      }
+
+      before(:each) do
+        connection.stub(:search) do
+          ldap_entry
+        end
+      end
+
+      it 'returns the username' do
+        subject.load_user_data(username)[:username].should eq(username)
+      end
+
+      it 'returns the extra attributes' do
+        subject.load_user_data(username)[:extra_attributes][:email].should eq(email)
+      end
+    end
+
+    context 'invalid username' do
+      it 'returns nil' do
+        subject.load_user_data(username).should eq(nil)
+      end
     end
   end
 
@@ -25,11 +59,6 @@ describe CASino::LDAPAuthenticator do
     let(:password) { 'foo' }
     let(:user_filter) { Net::LDAP::Filter.eq(options[:username_attribute], username) }
     let(:extra_attributes) { ['mail', :displayname, 'memberof'] }
-
-    before(:each) do
-      connection.stub(:bind_as)
-      connection.stub(:search)
-    end
 
     it 'does the connection setup' do
       connection.should_receive(:host=).with(options[:host])
